@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Ideas;
 use App\Models\User;
 use App\Models\Post;
+use App\Http\Controllers\UserController;
 
 Route::view('/', 'welcome', [
     'greeting' => 'Hello, World!',
@@ -62,61 +63,10 @@ Route::patch('/posts/{post}', function (Post $post) {
 
 //user registration routes
 
-Route::get('/register', function () {
-    $users = User::all(); 
-    return view('user_registration.index', [
-        'users' => $users
-    ]);
-});
+Route::get('/register', [UserController::class, 'index']);
+Route::get('/register/create', [UserController::class, 'create']);
+Route::post('/register', [UserController::class, 'store']);
+Route::get('/register/show/{user}', [UserController::class, 'show']);
+Route::patch('/register/update/{user}', [UserController::class, 'update']);
+Route::delete('/register/delete/{user}', [UserController::class, 'destroy']);
 
-Route::get('/register/create', function () {
-    return view('user_registration.create');
-});
-
-Route::post('/register', function(User $user){
-    $user->create([
-        'first_name' => request('first_name'),
-        'last_name' => request('last_name'),
-        'middle_name' => request('middle_name'),
-        'nickname' => request('nickname'),
-        'age' => request('age'),
-        'address' => request('address'),
-        'contact_number' => request('contact_number'),
-        'email' => request('email'),
-        'password' => request('password'),
-    ]);
-
-    return redirect('/register');
-}
-);
-
-Route::get('/register/show/{user}', function(User $user){
-    return view('user_registration.show', [
-        'user' => $user,
-    ]);
-}
-);
-
-Route::patch('/register/update/{user}', function(User $user){
-    $user->update([
-        'first_name' => request('first_name'),
-        'last_name' => request('last_name'),
-        'middle_name' => request('middle_name'),
-        'nickname' => request('nickname'),
-        'age' => request('age'),
-        'address' => request('address'),
-        'contact_number' => request('contact_number'),
-        'email' => request('email'),
-        'password' => request('password'),
-    ]);
-
-    return redirect('/register');
-}
-);
-
-Route::delete('/register/delete/{user}', function (User $user) {
-    $user->delete();
-
-    return redirect('/register');
-    
-});
