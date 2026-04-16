@@ -89,10 +89,12 @@ Route::get('/emails', function () {
     return view('emails', compact('emails'));
 });
 
-// POST: receive submitted email
 Route::post('/emails', function () {
-    $email = request()->input('email');
+    request()->validate([
+        'email' => 'required|email',
+    ]);
 
+    $email = request()->input('email');
     $emails = session()->get('emails', []);
     $emails[] = $email;
     session()->put('emails', $emails);
